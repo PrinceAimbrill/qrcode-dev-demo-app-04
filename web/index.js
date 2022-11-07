@@ -15,6 +15,8 @@ import { AppInstallations } from "./app_installations.js";
 import applyQrCodeApiEndpoints from "./middleware/qr-code-api.js";
 import { QRCodesDB } from "./qr-codes-db.js";
 import applyQrCodePublicEndpoints from "./middleware/qr-code-public.js";
+import db from "./models/index.js";
+import cors from "cors";
 
 const USE_ONLINE_TOKENS = false;
 
@@ -75,6 +77,26 @@ export async function createServer(
   const app = express();
   applyQrCodePublicEndpoints(app);
 
+  var corsOptions = {
+    origin: "*",
+  };
+
+  app.use(cors(corsOptions));
+
+  // parse requests of content-type - application/x-www-form-urlencoded
+  app.use(express.urlencoded({ extended: true }));
+
+  db.sequelize
+    .sync()
+    .then(() => {
+      console.log("Synced db.");
+    })
+    .catch((err) => {
+      console.log("Failed to sync db: " + err.message);
+    });
+
+  require("../web/route/bundle.route")(app);
+
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
 
@@ -96,6 +118,10 @@ export async function createServer(
         res.status(500).send(e.message);
       }
     }
+  });
+
+  app.get("/", (req, res) => {
+    res.json({ message: "Bundling Rest APIs." });
   });
 
   // All endpoints after this point will require an active session
@@ -152,7 +178,6 @@ export async function createServer(
   }
 
   app.use("/*", async (req, res, next) => {
-
     if (typeof req.query.shop !== "string") {
       res.status(500);
       return res.send("No shop provided");
@@ -185,4 +210,8 @@ export async function createServer(
   return { app };
 }
 
-createServer().then(({ app }) => app.listen(PORT));
+createServer().then(({ app }) =>
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+  })
+);
