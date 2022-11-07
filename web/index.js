@@ -77,26 +77,6 @@ export async function createServer(
   const app = express();
   applyQrCodePublicEndpoints(app);
 
-  var corsOptions = {
-    origin: "*",
-  };
-
-  app.use(cors(corsOptions));
-
-  // parse requests of content-type - application/x-www-form-urlencoded
-  app.use(express.urlencoded({ extended: true }));
-
-  db.sequelize
-    .sync()
-    .then(() => {
-      console.log("Synced db.");
-    })
-    .catch((err) => {
-      console.log("Failed to sync db: " + err.message);
-    });
-
-  require("../web/route/bundle.route")(app);
-
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
 
@@ -120,9 +100,9 @@ export async function createServer(
     }
   });
 
-  app.get("/", (req, res) => {
-    res.json({ message: "Bundling Rest APIs." });
-  });
+  // app.get("/", (req, res) => {
+  //   res.json({ message: "Bundling Rest APIs." });
+  // });
 
   // All endpoints after this point will require an active session
   app.use(
@@ -150,6 +130,27 @@ export async function createServer(
   // attribute, as a result of the express.json() middleware
   app.use(express.json());
   applyQrCodeApiEndpoints(app);
+
+  
+  // app.use(
+  //   cors({
+  //     origin: "*",
+  //   })
+  // );
+
+  // // parse requests of content-type - application/x-www-form-urlencoded
+  app.use(express.urlencoded({ extended: true }));
+
+  db.sequelize
+    .sync()
+    .then(() => {
+      console.log("Synced db.");
+    })
+    .catch((err) => {
+      console.log("Failed to sync db: " + err.message);
+    });
+
+  // require("../web/route/bundle.route")(app);
 
   app.use((req, res, next) => {
     const shop = Shopify.Utils.sanitizeShop(req.query.shop);
@@ -210,8 +211,4 @@ export async function createServer(
   return { app };
 }
 
-createServer().then(({ app }) =>
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
-  })
-);
+createServer().then(({ app }) => app.listen(PORT));

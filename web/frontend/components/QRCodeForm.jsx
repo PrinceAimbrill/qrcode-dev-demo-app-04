@@ -14,17 +14,17 @@ const initialValues = {
   maximum_number_of_items: "",
 };
 
-// const BUNDLE_API = "http://localhost:8080/api/bundles";
+const BUNDLE_API = "http://localhost:8080/api/bundles";
 
 export function QRCodeForm() {
   const handleBundleSubmit = async (fields) => {
     console.log("fields", fields);
-    // try {
-    //   const response = await axios.post(BUNDLE_API, fields);
-    //   console.log(response);
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    try {
+      const response = await axios.post(BUNDLE_API, fields);
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const ProductSchema = Yup.object().shape({
