@@ -79,6 +79,18 @@ export async function parseQrCodeBody(req, res) {
   };
 }
 
+export async function parseBundleBody(req, res) {
+  return {
+    name: req?.body?.name,
+    title: req.body?.title,
+    description: req?.body?.description,
+    price_summary: req?.body?.price_summary,
+    sequence_no: req?.body?.sequence_no,
+    minimum_number_of_items: req?.body?.minimum_number_of_items,
+    maximum_number_of_items: req?.body?.maximum_number_of_items,
+  };
+}
+
 /*
   Replaces the productId with product data queried from the Shopify GraphQL Admin API
 */

@@ -1,4 +1,6 @@
 import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
+import { BundleForm } from "./components";
+import { BundleSetting } from "./components/BundleSettingForm";
 
 /**
  * File-based routing.
@@ -26,6 +28,8 @@ export default function Routes({ pages }) {
     <ReactRouterRoutes>
       {routeComponents}
       <Route path="*" element={<NotFound />} />
+      <Route path="/bundles/:id" element={<BundleForm />} />
+      <Route path="/bundles/settings" element={<BundleSetting />} />
     </ReactRouterRoutes>
   );
 }

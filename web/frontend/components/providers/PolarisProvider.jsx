@@ -49,7 +49,22 @@ function AppBridgeLink({ url, children, external, ...rest }) {
  */
 export function PolarisProvider({ children }) {
   return (
-    <AppProvider i18n={translations} linkComponent={AppBridgeLink}>
+    <AppProvider i18n={{
+      Polaris: {
+        ResourceList: {
+          sortingLabel: 'Sort by',
+          defaultItemSingular: 'item',
+          defaultItemPlural: 'items',
+          showing: 'Showing {itemsCount} {resource}',
+          Item: {
+            viewItem: 'View details for {itemName}',
+          },
+        },
+        Common: {
+          checkbox: 'checkbox',
+        },
+      },
+    }} linkComponent={AppBridgeLink}>
       {children}
     </AppProvider>
   );

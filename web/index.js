@@ -17,6 +17,9 @@ import { QRCodesDB } from "./qr-codes-db.js";
 import applyQrCodePublicEndpoints from "./middleware/qr-code-public.js";
 import db from "./models/index.js";
 import cors from "cors";
+import applyBundleApiEndpoints from "./middleware/bundle-api.js";
+import bodyParser from 'body-parser';
+import applyBundleSettingApiEndpoints from "./middleware/bundle-setting-api.js";
 
 const USE_ONLINE_TOKENS = false;
 
@@ -75,7 +78,15 @@ export async function createServer(
   billingSettings = BILLING_SETTINGS
 ) {
   const app = express();
+  // support parsing of application/json type post data
+  app.use(bodyParser.json());
+
+  //support parsing of application/x-www-form-urlencoded post data
+  app.use(bodyParser.urlencoded({ extended: true }));
+  
   applyQrCodePublicEndpoints(app);
+  applyBundleApiEndpoints(app);
+  applyBundleSettingApiEndpoints(app);
 
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
@@ -129,14 +140,8 @@ export async function createServer(
   // All endpoints after this point will have access to a request.body
   // attribute, as a result of the express.json() middleware
   app.use(express.json());
-  applyQrCodeApiEndpoints(app);
 
-  
-  // app.use(
-  //   cors({
-  //     origin: "*",
-  //   })
-  // );
+  applyQrCodeApiEndpoints(app);
 
   // // parse requests of content-type - application/x-www-form-urlencoded
   app.use(express.urlencoded({ extended: true }));
@@ -149,8 +154,6 @@ export async function createServer(
     .catch((err) => {
       console.log("Failed to sync db: " + err.message);
     });
-
-  // require("../web/route/bundle.route")(app);
 
   app.use((req, res, next) => {
     const shop = Shopify.Utils.sanitizeShop(req.query.shop);

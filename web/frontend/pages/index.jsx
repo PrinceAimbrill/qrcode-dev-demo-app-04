@@ -1,12 +1,13 @@
 import { useNavigate, TitleBar, Loading } from "@shopify/app-bridge-react";
 import {
+  Button,
   Card,
   EmptyState,
   Layout,
   Page,
   SkeletonBodyText,
 } from "@shopify/polaris";
-import { QRCodeIndex } from "../components";
+import { BundleList, QRCodeIndex } from "../components";
 import { useAppQuery } from "../hooks";
 
 export default function HomePage() {
@@ -51,10 +52,10 @@ export default function HomePage() {
     !isLoading && !QRCodes?.length ? (
       <Card sectioned>
         <EmptyState
-          heading="Create unique QR codes for your product"
+          heading="Create product bundles"
           action={{
-            content: "Create QR code",
-            onAction: () => navigate("/qrcodes/new"),
+            content: "Create Bundle",
+            onAction: () => navigate("/bundles/new"),
           }}
           image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
         >
@@ -65,24 +66,39 @@ export default function HomePage() {
       </Card>
     ) : null;
 
+  const bundleSetting = () => {
+    navigate("/bundles/settings");
+  };
+
   /*
     Use Polaris Page and TitleBar components to create the page layout,
     and include the empty state contents set above.
   */
   return (
     <Page fullWidth={!!qrCodesMarkup}>
-      <TitleBar
+      {/* <TitleBar
         title="QR codes"
         primaryAction={{
           content: "Create QR code",
           onAction: () => navigate("/qrcodes/new"),
         }}
+      /> */}
+      <TitleBar
+        title="Product Bundles"
+        primaryAction={{
+          content: "Create Bundle",
+          onAction: () => navigate("/bundles/new"),
+        }}
       />
       <Layout>
         <Layout.Section>
-          {loadingMarkup}
-          {qrCodesMarkup}
-          {emptyStateMarkup}
+          <Button onClick={() => bundleSetting()}>Bundle Settings</Button>
+          <div>
+            {loadingMarkup}
+            {/* {qrCodesMarkup} */}
+            {emptyStateMarkup}
+            <BundleList QRCodes={QRCodes} loading={isRefetching} />
+          </div>
         </Layout.Section>
       </Layout>
     </Page>

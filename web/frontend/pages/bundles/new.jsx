@@ -1,6 +1,6 @@
 import { Page } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { QRCodeForm } from "../../components";
+import { BundleForm } from "../../components";
 
 export default function ManageCode() {
   const breadcrumbs = [{ content: "Product Bundles", url: "/" }];
@@ -12,7 +12,7 @@ export default function ManageCode() {
         breadcrumbs={breadcrumbs}
         primaryAction={null}
       />
-      <QRCodeForm />
+      <BundleForm />
     </Page>
   );
 }
